@@ -1,18 +1,34 @@
 import React, { Component, Dispatch } from "react";
 import { connect } from "react-redux";
-import { loginRequest } from "../actions";
+import {
+  phoneNumberRequest,
+  phoneNumberVerifyRequest,
+  reSendPhoneNumberRequest,
+} from "../actions";
 import { ApplicationState } from "../../../store";
 import styled from "styled-components";
 import PhoneNumberFrom from "../views/PhoneNumberForm";
-// import EmailVerifyForm from "../views/EmailverifyForm";
+import {
+  PhoneNumberResponse,
+  PhoneNumberVerifyResponse,
+  PhoneNumber,
+  ReSendPhoneNumber,
+  PhoneNumberVerify,
+} from "../types";
+import EmailVerifyForm from "../views/EmailVerifyForm";
 
 interface PropsFromState {
   loading: boolean;
+  phoneNumber: PhoneNumberResponse;
+  phoneNumberVerify: PhoneNumberVerifyResponse;
+  reSendPhoneNumber: PhoneNumberResponse;
   errors: {};
 }
 
 interface PropsDispatchFromState {
-  onLogin: typeof loginRequest;
+  onPhoneNumber: typeof phoneNumberRequest;
+  onPhoneNumberVerify: typeof phoneNumberVerifyRequest;
+  onReSendPhoneNumberOTP: typeof reSendPhoneNumberRequest;
 }
 
 type AllProps = PropsFromState & PropsDispatchFromState;
@@ -22,17 +38,23 @@ interface State {}
 class Login extends Component<AllProps, State> {
   state: State = {};
 
-  componentDidMount() {
-    this.props.onLogin();
-  }
+  componentDidMount() {}
 
   render() {
     const { loading } = this.props;
     return (
       <Container>
         <FirstHalf>
-          <PhoneNumberFrom loading={loading} />
-          {/* <EmailVerifyForm loading={loading}/> */}
+          {/* <PhoneNumberFrom
+            loading={loading}
+            onPhoneNumber={this.props.onPhoneNumber}
+            onPhoneNumberVerify={this.props.onPhoneNumberVerify}
+            onReSendPhoneNumberOTP={this.props.onReSendPhoneNumberOTP}
+            phoneNumber={this.props.phoneNumber}
+            phoneNumberVerify={this.props.phoneNumberVerify}
+            reSendPhoneNumber={this.props.reSendPhoneNumber}
+          /> */}
+          <EmailVerifyForm loading={loading}/>
         </FirstHalf>
         <SecondHalf>
           <Text>Best User Profile</Text>
@@ -68,11 +90,18 @@ const Text = styled.div`
 
 const mapStateToProps: any = ({ auth }: ApplicationState) => ({
   loading: auth.loading,
+  phoneNumber: auth.phoneNumber !== null && auth.phoneNumber,
+  phoneNumberVerify: auth.phoneNumberVerify,
+  reSendPhoneNumber: auth.reSendPhoneNumber,
   errors: auth.errors,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-  onLogin: () => dispatch(loginRequest()),
+  onPhoneNumber: (params: PhoneNumber) => dispatch(phoneNumberRequest(params)),
+  onPhoneNumberVerify: (params: PhoneNumberVerify) =>
+    dispatch(phoneNumberVerifyRequest(params)),
+  onReSendPhoneNumberOTP: (params: ReSendPhoneNumber) =>
+    dispatch(reSendPhoneNumberRequest(params)),
 });
 
 export default connect<any>(mapStateToProps, mapDispatchToProps)(Login);

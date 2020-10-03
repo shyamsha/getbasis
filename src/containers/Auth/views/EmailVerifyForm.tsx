@@ -23,7 +23,7 @@ const EmailVerifyForm: FC<Props> = (props: Props) => {
           otp: "",
         }}
         validationSchema={yup.object().shape({
-          email: yup.string().required("email is Required.").email("Invalid Email"),
+          email: yup.string().required("Email Required.").email("Invalid Email"),
           otp: yup.string().required("Otp is Required."),
         })}
         onSubmit={values => {}}
@@ -81,7 +81,7 @@ const EmailVerifyForm: FC<Props> = (props: Props) => {
                 type="primary"
                 className="login-form-button"
               >
-                Verify Phone Number
+                Verify Email
               </LoginButton>
             </div>
           </FormContainer>
