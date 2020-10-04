@@ -53,6 +53,11 @@ export const reSendEmail = (params: ReSendEmailParams) => {
   return API.put(url, params);
 };
 
+export const referralCode = (params:{code:string})=>{
+ const url = `${API_ENDPOINT}/users/referral/${params.code}`
+ return API.put(url,{})
+}
+
 export const signUp = (params: SignUpParams) => {
   const url = `${API_ENDPOINT}/users`;
   return API.post(url, params, config);
@@ -60,6 +65,6 @@ export const signUp = (params: SignUpParams) => {
 
 export const logout = (params:LogoutParams) => {
   const url = `${API_ENDPOINT}/users/logout/${params.user_id}`;
-  return API.get(url);
+  return API.deleteResource(url);
 };
 

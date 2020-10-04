@@ -11,6 +11,8 @@ import {
   phoneNumberSuccess,
   phoneNumberVerifyError,
   phoneNumberVerifySuccess,
+  referralCodeFailure,
+  referralCodeSuccess,
   ReSendEmailError,
   ReSendEmailSuccess,
   reSendPhoneNumberError,
@@ -135,7 +137,7 @@ function* reSendEmail({
     if (res.error) {
       yield put(ReSendEmailError(res.error));
     } else {
-      yield put(ReSendEmailSuccess(res.data));
+      yield put(ReSendEmailSuccess(res.data.message));
     }
   } catch (err) {
     if (err instanceof Error) {
@@ -143,6 +145,27 @@ function* reSendEmail({
     } else {
       yield put(
         ReSendEmailError(unknownError("An unknown error occurred")),
+      );
+    }
+  }
+}
+
+function* referral({
+  payload: params,
+}: SagaAction<{code:string}>) {
+  try {
+    const res = yield call(Api.referralCode, params);
+    if (res.error) {
+      yield put(referralCodeFailure(res.error));
+    } else {
+      yield put(referralCodeSuccess(res.data));
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      yield put(referralCodeFailure(err));
+    } else {
+      yield put(
+        referralCodeFailure(unknownError("An unknown error occurred")),
       );
     }
   }
@@ -201,6 +224,7 @@ function* watchFetchRequest() {
   yield takeLatest(AuthActionTypes.EMAIL_REQUEST, email);
   yield takeLatest(AuthActionTypes.EMAIL_VERIFY_REQUEST, emailVerify);
   yield takeLatest(AuthActionTypes.RESEND_EMAIL_VERIFY_REQUEST,reSendEmail);
+  yield takeLatest(AuthActionTypes.REFERRAL_CODE_REQUEST,referral)
   yield takeLatest(AuthActionTypes.SIGNUP_REQUEST,signUp);
   yield takeLatest(AuthActionTypes.LOGOUT_REQUEST,logout)
 }

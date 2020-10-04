@@ -25,7 +25,7 @@ export interface EmailParams {
 
 export interface EmailVerifyParams {
   email: string;
-  token: number;
+  token: any;
   verificationToken: string;
 }
 
@@ -160,7 +160,7 @@ export interface SignUpParams {
   phoneNumber: string;
   referredCodeKey: string;
   agreeToPrivacyPolicy: boolean;
-  token: string;
+  token: number;
   source: string;
 }
 
@@ -253,6 +253,10 @@ export enum AuthActionTypes {
   SIGNUP_SUCCESS = "@@auth/signUp/SIGNUP_SUCCESS",
   SIGNUP_FAILURE = "@@auth/signUp/SIGNUP_FAILURE",
 
+  REFERRAL_CODE_REQUEST = "@@auth/referral/REFERRAL_CODE_REQUEST",
+  REFERRAL_CODE_SUCCESS = "@@auth/referral/REFERRAL_CODE_SUCCESS",
+  REFERRAL_CODE_FAILURE = "@@auth/referral/REFERRAL_CODE_FAILURE",
+
   LOGOUT_REQUEST = "@@auth/logout/LOGOUT_REQUEST",
   LOGOUT_SUCCESS = "@@auth/logout/LOGOUT_SUCCESS",
   LOGOUT_ERROR = "@@auth/logout/LOGOUT_ERROR",
@@ -263,9 +267,18 @@ export interface AuthState {
   readonly phoneNumber: PhoneNumberResponse | null;
   readonly phoneNumberVerify: PhoneNumberVerifyResponse | null;
   readonly reSendPhoneNumber: PhoneNumber | null;
+  readonly phoneSuccess:boolean
+  readonly emailLoading:{
+    email:boolean;
+    emailVerify:boolean;
+    reSendEmail:boolean;
+  }
   readonly email: EmailResponse | null;
   readonly emailVerify: EmailVerifyResponse | null;
   readonly reSendEmail: ReSendEmailResponse | null;
+  readonly emailSuccess:boolean;
+  readonly signUpLoading:boolean;
+  readonly referralCode: string | null;
   readonly signUp: SignUpResponse | null;
   readonly errors: {
     phone?: string;

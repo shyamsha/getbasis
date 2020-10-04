@@ -1,15 +1,81 @@
-import { Button, Input } from "antd";
+import { Button, Input, message } from "antd";
 import { Formik } from "formik";
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import styled from "styled-components";
 import * as yup from "yup";
+import {
+  EmailResponse,
+  EmailVerifyResponse,
+  ReSendEmailResponse,
+  EmailParams,
+  EmailVerifyParams,
+  ReSendEmailParams,
+  PhoneNumberResponse,
+} from "../types";
 
 interface Props {
-  loading: boolean;
+  emailLoading: {
+    email: boolean;
+    emailVerify: boolean;
+    reSendEmail: boolean;
+  };
+  phoneNumber: PhoneNumberResponse;
+  email: EmailResponse;
+  emailVerify: EmailVerifyResponse;
+  reSendEmail: ReSendEmailResponse;
+  onEmail: (params: EmailParams) => void;
+  onEmailVerify: (params: EmailVerifyParams) => void;
+  onReSendEmail: (params: ReSendEmailParams) => void;
 }
 
 const EmailVerifyForm: FC<Props> = (props: Props) => {
-  const { loading } = props;
+  const { emailLoading, phoneNumber, email, emailVerify, reSendEmail } = props;
+  const [otpToggle, setOtpToggle] = useState(true);
+  const [isPhoneValid, setIsPhoneValid] = useState(true);
+  const sendOtp = (values: { email: string; phone: string; otp: string }) => {
+    setOtpToggle(false);
+    props.onEmail({
+      email: values.email,
+      token: phoneNumber.results.token,
+      phoneNumber: values.phone,
+    });
+  };
+  const validEmail = (email: String) => {
+    if (email.length < 0) {
+      setIsPhoneValid(false);
+    } else if (email.length > 3 && email.includes("@")) {
+      setIsPhoneValid(true);
+    }
+  };
+  const reSendOtp = (values: { email: string; otp: string }) => {
+    props.onReSendEmail({
+      email: values.email,
+      token: phoneNumber.results.token,
+    });
+  };
+
+  useEffect(() => {
+    if (emailLoading.email&&email!==null) {
+      message.success(email.message);
+    }
+    if (
+      emailLoading.emailVerify && emailVerify!==null
+    ) {
+      message.success(emailVerify.message);
+    }
+    if (
+      emailLoading.reSendEmail && reSendEmail!==null
+    ) {
+      message.success(reSendEmail.message);
+    }
+  }, [
+    email,
+    emailVerify,
+    reSendEmail,
+    emailLoading.email,
+    emailLoading.emailVerify,
+    emailLoading.reSendEmail,
+  ]);
 
   return (
     <Container>
@@ -20,13 +86,24 @@ const EmailVerifyForm: FC<Props> = (props: Props) => {
       <Formik
         initialValues={{
           email: "",
+          phone: "",
           otp: "",
         }}
         validationSchema={yup.object().shape({
-          email: yup.string().required("Email Required.").email("Invalid Email"),
+          email: yup
+            .string()
+            .required("Email Required.")
+            .email("Invalid Email"),
+          phone: yup.string().required("Phone Required"),
           otp: yup.string().required("Otp is Required."),
         })}
-        onSubmit={values => {}}
+        onSubmit={values =>
+          props.onEmailVerify({
+            email: values.email,
+            token: `${phoneNumber.results.token}`,
+            verificationToken: values.otp,
+          })
+        }
       >
         {({
           values,
@@ -41,6 +118,20 @@ const EmailVerifyForm: FC<Props> = (props: Props) => {
           <FormContainer onSubmit={handleSubmit}>
             <div style={{ marginBottom: "1.5rem" }}>
               <StyledInput
+                type="tel"
+                id="phone"
+                name="phone"
+                placeholder="Phone Number"
+                value={values.phone}
+                onChange={handleChange("phone")}
+                onBlur={() => setFieldTouched("phone")}
+              />
+              {touched.phone && errors.phone && (
+                <div className="error-text">{errors.phone}</div>
+              )}
+            </div>
+            <div style={{ marginBottom: "1.5rem" }}>
+              <StyledInput
                 type="email"
                 id="email"
                 name="email"
@@ -52,7 +143,44 @@ const EmailVerifyForm: FC<Props> = (props: Props) => {
               {touched.email && errors.email && (
                 <div className="error-text">{errors.email}</div>
               )}
+              <div className="error-text">
+                {isPhoneValid ? "" : "Email Required"}
+              </div>
+              {otpToggle ? (
+                <span
+                  style={{
+                    color: "#0aafff",
+                    fontSize: "0.875rem",
+                    cursor: "pointer",
+                    float: "right",
+                  }}
+                  onClick={
+                    values.email.length > 3 && values.email.includes("@")
+                      ? () => sendOtp(values)
+                      : () => validEmail(values.email)
+                  }
+                >
+                  Send OTP
+                </span>
+              ) : (
+                <span
+                  style={{
+                    color: "#0aafff",
+                    fontSize: "0.875rem",
+                    cursor: "pointer",
+                    float: "right",
+                  }}
+                  onClick={
+                    values.email.length > 3 && values.email.includes("@")
+                      ? () => reSendOtp(values)
+                      : () => validEmail(values.email)
+                  }
+                >
+                  ReSend OTP
+                </span>
+              )}
             </div>
+
             <div style={{ marginBottom: "2rem" }}>
               <StyledInput
                 id="otp"
@@ -76,7 +204,7 @@ const EmailVerifyForm: FC<Props> = (props: Props) => {
               }}
             >
               <LoginButton
-                loading={loading}
+                loading={emailLoading.emailVerify}
                 htmlType="submit"
                 type="primary"
                 className="login-form-button"
@@ -95,9 +223,9 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
-  align-items:stretch;
+  align-items: stretch;
   width: 100%;
-  height:100%;
+  height: 100%;
   padding: 6.5rem;
   .title-text {
     color: #1c2d41;

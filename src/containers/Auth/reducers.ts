@@ -6,9 +6,18 @@ const initialState: AuthState = {
   phoneNumber: null,
   phoneNumberVerify: null,
   reSendPhoneNumber: null,
+  phoneSuccess: false,
+  emailLoading: {
+    email: false,
+    emailVerify: false,
+    reSendEmail: false,
+  },
   email: null,
   emailVerify: null,
   reSendEmail: null,
+  emailSuccess: false,
+  signUpLoading: false,
+  referralCode: null,
   signUp: null,
   errors: {
     phone: undefined,
@@ -47,19 +56,21 @@ const reducer: Reducer<AuthState, A> = (
       return {
         ...state,
         loading: true,
+        phoneSuccess:false,
         errors: { ...state.errors, phoneVerify: undefined },
       };
     case AuthActionTypes.PHONE_NUMBER_VERIFY_SUCCESS:
       return {
         ...state,
         loading: false,
+        phoneSuccess: true,
         phoneNumberVerify: action.payload.data,
       };
     case AuthActionTypes.PHONE_NUMBER_VERIFY_FAILURE:
       return {
         ...state,
         loading: false,
-        errors: { ...state.errors, phoneVerify: action.payload },
+        errors: { ...state.errors,phoneSuccess:false, phoneVerify: action.payload },
       };
 
     case AuthActionTypes.RESEND_PHONE_NUMBER_REQUEST:
@@ -84,30 +95,41 @@ const reducer: Reducer<AuthState, A> = (
     case AuthActionTypes.EMAIL_REQUEST:
       return {
         ...state,
-        loading: true,
+        emailLoading: { ...state.emailLoading, email: true },
         errors: { ...state.errors, email: undefined },
       };
     case AuthActionTypes.EMAIL_SUCCESS:
-      return { ...state, loading: false, email: action.payload };
+      return {
+        ...state,
+        emailLoading: { ...state.emailLoading, email: false },
+        email: action.payload,
+      };
     case AuthActionTypes.EMAIL_FAILURE:
       return {
         ...state,
-        loading: false,
+        emailLoading: { ...state.emailLoading, email: false },
         errors: { ...state.errors, email: action.payload },
       };
 
     case AuthActionTypes.EMAIL_VERIFY_REQUEST:
       return {
         ...state,
-        loading: true,
+        emailLoading: { ...state.emailLoading, emailVerify: true },
+        emailSuccess:false,
         errors: { ...state.errors, emailVerify: undefined },
       };
     case AuthActionTypes.EMAIL_VERIFY_SUCCESS:
-      return { ...state, loading: false, emailVerify: action.payload };
+      return {
+        ...state,
+        emailLoading: { ...state.emailLoading, emailVerify: false },
+        emailSuccess: true,
+        emailVerify: action.payload,
+      };
     case AuthActionTypes.EMAIL_VERIFY_FAILURE:
       return {
         ...state,
-        loading: false,
+        emailLoading: { ...state.emailLoading, emailVerify: false },
+        emailSuccess:false,
         errors: { ...state.errors, emailVerify: action.payload },
       };
 
@@ -126,14 +148,29 @@ const reducer: Reducer<AuthState, A> = (
         errors: { ...state.errors, reSendEmail: action.payload },
       };
 
-    case AuthActionTypes.SIGNUP_REQUEST:
+    case AuthActionTypes.REFERRAL_CODE_REQUEST:
       return {
         ...state,
         loading: true,
         errors: { ...state.errors, signUp: undefined },
       };
+    case AuthActionTypes.REFERRAL_CODE_SUCCESS:
+      return { ...state, loading: false, referralCode: action.payload };
+    case AuthActionTypes.REFERRAL_CODE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        errors: { ...state.errors, signUp: action.payload },
+      };
+
+    case AuthActionTypes.SIGNUP_REQUEST:
+      return {
+        ...state,
+        signUpLoading: true,
+        errors: { ...state.errors, signUp: undefined },
+      };
     case AuthActionTypes.SIGNUP_SUCCESS:
-      return { ...state, loading: false, signUp: action.payload };
+      return { ...state, signUpLoading: false, signUp: action.payload };
     case AuthActionTypes.SIGNUP_FAILURE:
       return {
         ...state,

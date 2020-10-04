@@ -3,13 +3,19 @@ import { Formik } from "formik";
 import React, { FC } from "react";
 import styled from "styled-components";
 import * as yup from "yup";
+import { PhoneNumberResponse, SignUpParams, SignUpResponse } from "../types";
 
 interface Props {
-  loading: boolean;
+  phoneNumber: PhoneNumberResponse;
+  signUpLoading: boolean;
+  signUp: SignUpResponse;
+  referral: string;
+  onReferralCode: (params: { code: string }) => void;
+  onSignUp: (params: SignUpParams) => void;
 }
 
-const PhoneNumberForm: FC<Props> = (props: Props) => {
-  const { loading } = props;
+const SignUpForm: FC<Props> = (props: Props) => {
+  const { signUpLoading, phoneNumber } = props;
 
   return (
     <Container>
@@ -26,18 +32,27 @@ const PhoneNumberForm: FC<Props> = (props: Props) => {
           referredCodeKey: "",
         }}
         validationSchema={yup.object().shape({
-          firstName: yup.string().required("First Name is Required."),
-          lastName: yup.string().required("Last Name is Required."),
+          firstName: yup.string().required("First Name Required."),
+          lastName: yup.string().required("Last Name Required."),
           email: yup
             .string()
-            .required("Email is Required.")
+            .required("Email Required.")
             .email("Invalid Email"),
-          phone: yup.string().required("Phone Number is Required."),
-          referredCodeKey: yup
-            .string()
-            .required("referredCodeKey is Required."),
+          phone: yup.string().required("Phone Number Required."),
+          referredCodeKey: yup.string().required("referredCodeKey Required."),
         })}
-        onSubmit={values => {}}
+        onSubmit={values =>
+          props.onSignUp({
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            phoneNumber: values.phone,
+            referredCodeKey: values.referredCodeKey,
+            token: phoneNumber.results.token,
+            agreeToPrivacyPolicy: true,
+            source: "WEB_APP",
+          })
+        }
       >
         {({
           values,
@@ -56,12 +71,12 @@ const PhoneNumberForm: FC<Props> = (props: Props) => {
                 id="firstName "
                 name="firstName "
                 placeholder="Enter firstName "
-                value={values.firstName }
+                value={values.firstName}
                 onChange={handleChange("firstName ")}
                 onBlur={() => setFieldTouched("firstName ")}
               />
-              {touched.firstName  && errors.firstName  && (
-                <div className="error-text">{errors.firstName }</div>
+              {touched.firstName && errors.firstName && (
+                <div className="error-text">{errors.firstName}</div>
               )}
             </div>
             <div style={{ marginBottom: "1.5rem" }}>
@@ -113,7 +128,12 @@ const PhoneNumberForm: FC<Props> = (props: Props) => {
                 value={values.referredCodeKey}
                 placeholder="referredCodeKey"
                 type="text"
-                onChange={handleChange("referredCodeKey")}
+                onChange={e => {
+                  setFieldValue("referredCodeKey", e.target.value);
+                  if (e.target.value.length > 5) {
+                    props.onReferralCode({ code: e.target.value });
+                  }
+                }}
                 onBlur={() => setFieldTouched("referredCodeKey")}
               />
               {touched.referredCodeKey && errors.referredCodeKey && (
@@ -128,7 +148,7 @@ const PhoneNumberForm: FC<Props> = (props: Props) => {
               }}
             >
               <LoginButton
-                loading={loading}
+                loading={signUpLoading}
                 htmlType="submit"
                 type="primary"
                 className="login-form-button"
@@ -238,4 +258,4 @@ const Welcome = styled.div`
   font-size: 0.875rem;
 `;
 
-export default PhoneNumberForm;
+export default SignUpForm;

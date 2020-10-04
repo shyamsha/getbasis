@@ -59,6 +59,13 @@ export const ReSendEmailSuccess = (res: ReSendEmailResponse) =>
 export const ReSendEmailError = (message: Error) =>
   action(AuthActionTypes.RESEND_EMAIL_VERIFY_FAILURE, message);
 
+export const referralCodeRequest = (params:{code:string}) =>
+  action(AuthActionTypes.REFERRAL_CODE_REQUEST,params);
+export const referralCodeSuccess = (res: any) =>
+  action(AuthActionTypes.REFERRAL_CODE_SUCCESS, res);
+export const referralCodeFailure = (message: Error) =>
+  action(AuthActionTypes.REFERRAL_CODE_FAILURE, message);
+
 export const signUpRequest = (params: SignUpParams) =>
   action(AuthActionTypes.SIGNUP_REQUEST, params);
 export const SignUpSuccess = (res: SignUpResponse) =>
@@ -66,9 +73,9 @@ export const SignUpSuccess = (res: SignUpResponse) =>
 export const signUpError = (message: Error) =>
   action(AuthActionTypes.SIGNUP_FAILURE, message);
 
-export const logoutRequest = (params:LogoutParams) =>
-action(AuthActionTypes.LOGOUT_REQUEST);
+export const logoutRequest = (params: LogoutParams) =>
+  action(AuthActionTypes.LOGOUT_REQUEST);
 export const logoutSuccess = (res: any) =>
-action(AuthActionTypes.LOGOUT_SUCCESS, res);
+  action(AuthActionTypes.LOGOUT_SUCCESS, res);
 export const logoutError = (message: Error) =>
-action(AuthActionTypes.LOGOUT_ERROR, message);
+  action(AuthActionTypes.LOGOUT_ERROR, message);
