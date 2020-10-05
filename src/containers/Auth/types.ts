@@ -64,6 +64,7 @@ export interface Results {
   resendOtpCount: number;
   token: number;
   isLogin: boolean;
+  user?: User;
 }
 
 export interface messageObj {}

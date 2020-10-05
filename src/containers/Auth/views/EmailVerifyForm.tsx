@@ -14,6 +14,8 @@ import {
 } from "../types";
 
 interface Props {
+  phoneSuccess:boolean;
+  emailSuccess:boolean;
   emailLoading: {
     email: boolean;
     emailVerify: boolean;
@@ -29,7 +31,7 @@ interface Props {
 }
 
 const EmailVerifyForm: FC<Props> = (props: Props) => {
-  const { emailLoading, phoneNumber, email, emailVerify, reSendEmail } = props;
+  const { emailLoading, phoneNumber, email, emailVerify, reSendEmail,emailSuccess,phoneSuccess } = props;
   const [otpToggle, setOtpToggle] = useState(true);
   const [isPhoneValid, setIsPhoneValid] = useState(true);
   const sendOtp = (values: { email: string; phone: string; otp: string }) => {
@@ -55,11 +57,11 @@ const EmailVerifyForm: FC<Props> = (props: Props) => {
   };
 
   useEffect(() => {
-    if (emailLoading.email&&email!==null) {
+    if (!emailLoading.email&&email!==null&&phoneSuccess&&!emailSuccess) {
       message.success(email.message);
     }
     if (
-      emailLoading.emailVerify && emailVerify!==null
+      !emailLoading.emailVerify&& emailVerify!==null && emailSuccess
     ) {
       message.success(emailVerify.message);
     }
@@ -75,7 +77,11 @@ const EmailVerifyForm: FC<Props> = (props: Props) => {
     emailLoading.email,
     emailLoading.emailVerify,
     emailLoading.reSendEmail,
+    phoneSuccess,
+    emailSuccess
   ]);
+
+  console.log(emailLoading.email)
 
   return (
     <Container>

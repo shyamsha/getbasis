@@ -1,5 +1,4 @@
 export enum RouteEnums {
-    DASHBOARD = "home",
+    DASHBOARD = "dashboard",
     LOGIN = "login",
   }
-  

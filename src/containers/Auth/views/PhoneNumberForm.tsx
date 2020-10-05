@@ -1,9 +1,11 @@
 import { Button, Input, message } from "antd";
+import { push } from "connected-react-router";
 import { Formik } from "formik";
 import React, { FC, useEffect, useState } from "react";
 import styled from "styled-components";
 import * as yup from "yup";
 import enums from "../../../config/enums";
+import { RouteEnums } from "../../../navigator/RouteEnums";
 import {
   PhoneNumber,
   PhoneNumberResponse,
@@ -20,10 +22,11 @@ interface Props {
   phoneNumber: PhoneNumberResponse;
   phoneNumberVerify: PhoneNumberVerifyResponse;
   reSendPhoneNumber: PhoneNumberResponse;
+  onNavigateToRoute: typeof push;
 }
 
 const PhoneNumberForm: FC<Props> = (props: Props) => {
-  const { loading, phoneNumber, phoneNumberVerify,reSendPhoneNumber } = props;
+  const { loading, phoneNumber, phoneNumberVerify, reSendPhoneNumber } = props;
   const [otpToggle, setOtpToggle] = useState(true);
   const [isPhoneValid, setIsPhoneValid] = useState(true);
   const sendOtp = (values: { phone: string; otp: string }) => {
@@ -44,11 +47,21 @@ const PhoneNumberForm: FC<Props> = (props: Props) => {
       token: phoneNumber.results.token,
     });
   };
-
+console.log(phoneNumberVerify)
+console.log(phoneNumber)
   useEffect(() => {
+    if (
+      phoneNumberVerify !== null &&
+      phoneNumberVerify.results !== undefined &&
+      phoneNumberVerify.results.isLogin
+    ) {
+      props.onNavigateToRoute(`/${RouteEnums.DASHBOARD}`);
+    }
     if (
       !loading &&
       phoneNumber !== null &&
+      reSendPhoneNumber === null &&
+      phoneNumberVerify === null &&
       phoneNumber.message === enums.OTPSent
     ) {
       message.success(phoneNumber.message);
@@ -56,6 +69,7 @@ const PhoneNumberForm: FC<Props> = (props: Props) => {
     if (
       !loading &&
       phoneNumberVerify !== null &&
+      reSendPhoneNumber === null &&
       phoneNumberVerify.message === enums.OTPVerify
     ) {
       message.success(phoneNumberVerify.message);
@@ -67,7 +81,7 @@ const PhoneNumberForm: FC<Props> = (props: Props) => {
     ) {
       message.success(reSendPhoneNumber.message);
     }
-  }, [loading, phoneNumber, phoneNumberVerify, reSendPhoneNumber]);
+  }, [loading, phoneNumber, phoneNumberVerify, props, reSendPhoneNumber]);
 
   return (
     <Container>

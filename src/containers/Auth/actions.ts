@@ -74,7 +74,7 @@ export const signUpError = (message: Error) =>
   action(AuthActionTypes.SIGNUP_FAILURE, message);
 
 export const logoutRequest = (params: LogoutParams) =>
-  action(AuthActionTypes.LOGOUT_REQUEST);
+  action(AuthActionTypes.LOGOUT_REQUEST,params);
 export const logoutSuccess = (res: any) =>
   action(AuthActionTypes.LOGOUT_SUCCESS, res);
 export const logoutError = (message: Error) =>

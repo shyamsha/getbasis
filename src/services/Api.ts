@@ -5,7 +5,8 @@ import {
   ReSendPhoneNumber,
   EmailVerifyParams,
   ReSendEmailParams,
-  SignUpParams, LogoutParams
+  SignUpParams,
+  LogoutParams,
 } from "./../containers/Auth/types";
 import config from "../config/app";
 import requestConfig from "../config/request";
@@ -53,18 +54,29 @@ export const reSendEmail = (params: ReSendEmailParams) => {
   return API.put(url, params);
 };
 
-export const referralCode = (params:{code:string})=>{
- const url = `${API_ENDPOINT}/users/referral/${params.code}`
- return API.put(url,{})
-}
+export const referralCode = (params: { code: string }) => {
+  const url = `${API_ENDPOINT}/users/referral/${params.code}`;
+  return API.put(url, {});
+};
 
 export const signUp = (params: SignUpParams) => {
   const url = `${API_ENDPOINT}/users`;
   return API.post(url, params, config);
 };
 
-export const logout = (params:LogoutParams) => {
+export const logout = (params: LogoutParams) => {
   const url = `${API_ENDPOINT}/users/logout/${params.user_id}`;
+  // const config = { ...requestConfig };
+  // const user: PhoneNumberVerifyResponse = JSON.parse(
+  //   localStorage.getItem("user") as string,
+  // );
+  // config.headers={
+  //   "auth-header":`Bearer ${user.results.user?._id},${user.results.user?.token}`
+  // }
   return API.deleteResource(url);
+  // return axios.delete(url, {
+  //   headers: {
+  //     "auth-header": `Bearer ${user.results.user?._id},${user.results.user?.token}`,
+  //   },
+  // });
 };
-

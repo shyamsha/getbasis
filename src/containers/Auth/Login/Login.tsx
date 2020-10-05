@@ -30,6 +30,7 @@ import {
 } from "../types";
 import EmailVerifyForm from "../views/EmailVerifyForm";
 import SignUpForm from "../views/SignUpForm";
+import { push } from "connected-react-router";
 
 interface PropsFromState {
   loading: boolean;
@@ -61,6 +62,7 @@ interface PropsDispatchFromState {
   onReSendEmail: typeof reSendEmailRequest;
   onReferralCode: typeof referralCodeRequest;
   onSignUp: typeof signUpRequest;
+  onNavigateToRoute:typeof push;
 }
 
 type AllProps = PropsFromState & PropsDispatchFromState;
@@ -79,15 +81,16 @@ class Login extends Component<AllProps, State> {
       phoneNumber,
       phoneSuccess,
       emailSuccess,
+      phoneNumberVerify
     } = this.props;
     return (
       <Container>
         <FirstHalf>
-          {phoneNumber !== null &&
+          {(phoneNumber !== null &&
           phoneNumber.results !== undefined &&
           phoneNumber.results.isLogin !== undefined &&
           !phoneNumber.results.isLogin &&
-          phoneSuccess ? (
+          phoneSuccess && !emailSuccess) ? (
             <EmailVerifyForm
               emailLoading={emailLoading}
               phoneNumber={phoneNumber}
@@ -97,13 +100,15 @@ class Login extends Component<AllProps, State> {
               email={this.props.email}
               emailVerify={this.props.emailVerify}
               reSendEmail={this.props.reSendEmail}
+              phoneSuccess={this.props.phoneSuccess}
+              emailSuccess={this.props.emailSuccess}
             />
-          ) : phoneSuccess !== undefined &&
-            phoneSuccess &&
-            emailSuccess !== undefined &&
-            emailSuccess ? (
+          ) : (phoneSuccess !== undefined &&
+            phoneSuccess) &&
+            (emailSuccess !== undefined &&
+            emailSuccess)? (
             <SignUpForm
-              signUpLoading={false}
+              signUpLoading={this.props.signUpLoading}
               phoneNumber={phoneNumber}
               signUp={this.props.signUp}
               referral={this.props.referral}
@@ -111,14 +116,15 @@ class Login extends Component<AllProps, State> {
               onReferralCode={this.props.onReferralCode}
             />
           ) : (
-            <PhoneNumberFrom
+             <PhoneNumberFrom
               loading={loading}
               onPhoneNumber={this.props.onPhoneNumber}
               onPhoneNumberVerify={this.props.onPhoneNumberVerify}
               onReSendPhoneNumberOTP={this.props.onReSendPhoneNumberOTP}
               phoneNumber={phoneNumber}
-              phoneNumberVerify={this.props.phoneNumberVerify}
+              phoneNumberVerify={phoneNumberVerify}
               reSendPhoneNumber={this.props.reSendPhoneNumber}
+              onNavigateToRoute={this.props.onNavigateToRoute}
             />
           )}
         </FirstHalf>
@@ -156,7 +162,7 @@ const Text = styled.div`
 
 const mapStateToProps: any = ({ auth }: ApplicationState) => ({
   loading: auth.loading,
-  phoneNumber: auth.phoneNumber !== null && auth.phoneNumber,
+  phoneNumber: auth.phoneNumber,
   phoneNumberVerify: auth.phoneNumberVerify,
   reSendPhoneNumber: auth.reSendPhoneNumber,
   emailLoading: auth.emailLoading,
@@ -185,6 +191,8 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   onReferralCode: (params: { code: string }) =>
     dispatch(referralCodeRequest(params)),
   onSignUp: (params: SignUpParams) => dispatch(signUpRequest(params)),
+  onNavigateToRoute: (route: string, state?: any) =>
+  dispatch(push(route, state)),
 });
 
 export default connect<any>(mapStateToProps, mapDispatchToProps)(Login);

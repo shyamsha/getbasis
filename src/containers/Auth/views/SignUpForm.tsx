@@ -1,6 +1,6 @@
 import { Button, Input } from "antd";
 import { Formik } from "formik";
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import styled from "styled-components";
 import * as yup from "yup";
 import { PhoneNumberResponse, SignUpParams, SignUpResponse } from "../types";
@@ -16,6 +16,11 @@ interface Props {
 
 const SignUpForm: FC<Props> = (props: Props) => {
   const { signUpLoading, phoneNumber } = props;
+
+useEffect(() => {
+
+
+}, [])
 
   return (
     <Container>
