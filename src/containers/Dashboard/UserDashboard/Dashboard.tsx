@@ -96,6 +96,8 @@ class Dashboard extends Component<AllProps, State> {
           <Modal
             title="Profile"
             visible={this.state.isVisible}
+            closeIcon={null}
+            onCancel={()=>this.setState({isVisible:false})}
             footer={null}
           >
             <Formik
