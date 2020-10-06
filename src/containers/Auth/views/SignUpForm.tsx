@@ -1,4 +1,4 @@
-import { Button, Input } from "antd";
+import { Button, Input, message } from "antd";
 import { Formik } from "formik";
 import React, { FC, useEffect } from "react";
 import styled from "styled-components";
@@ -17,10 +17,9 @@ interface Props {
 const SignUpForm: FC<Props> = (props: Props) => {
   const { signUpLoading, phoneNumber } = props;
 
-useEffect(() => {
-
-
-}, [])
+  useEffect(() => {
+    if (signUpLoading&&!signUpLoading) message.success("Signed Up successfully.");
+  });
 
   return (
     <Container>
@@ -75,10 +74,10 @@ useEffect(() => {
                 type="text"
                 id="firstName "
                 name="firstName "
-                placeholder="Enter firstName "
+                placeholder="Enter firstName"
                 value={values.firstName}
-                onChange={handleChange("firstName ")}
-                onBlur={() => setFieldTouched("firstName ")}
+                onChange={handleChange("firstName")}
+                onBlur={() => setFieldTouched("firstName")}
               />
               {touched.firstName && errors.firstName && (
                 <div className="error-text">{errors.firstName}</div>

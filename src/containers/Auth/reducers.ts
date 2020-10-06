@@ -207,32 +207,6 @@ const reducer: Reducer<AuthState, A> = (
       return {
         ...state,
         loading: false,
-        phoneNumber: null,
-        phoneNumberVerify: null,
-        reSendPhoneNumber: null,
-        phoneSuccess: false,
-        emailLoading: {
-          email: false,
-          emailVerify: false,
-          reSendEmail: false,
-        },
-        email: null,
-        emailVerify: null,
-        reSendEmail: null,
-        emailSuccess: false,
-        signUpLoading: false,
-        referralCode: null,
-        signUp: null,
-        errors: {
-          ...state.errors,
-          phone: undefined,
-          phoneVerify: undefined,
-          reSendPhone: undefined,
-          email: undefined,
-          emailVerify: undefined,
-          reSendEmail: undefined,
-          signUp: undefined,
-        },
       };
     case AuthActionTypes.LOGOUT_ERROR:
       return { ...state, loading: false, errors: { ...state.errors } };

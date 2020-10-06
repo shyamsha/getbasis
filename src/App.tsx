@@ -8,11 +8,13 @@ import "./App.css";
 import AppNavigator from "./navigator/AppNavigator";
 import ErrorBoundary from "./components/Error/ErrorBoundary";
 import { authInitialState } from "./containers/Auth/reducers";
+import { userInitialState } from "./containers/Dashboard/UserDashboard/reducers";
 
 const history = createBrowserHistory();
 
 const initialState: ApplicationState = {
   auth: authInitialState,
+  user:userInitialState,
   router: { location: history.location, action: "PUSH" },
 };
 

@@ -175,8 +175,8 @@ export const post = async (url: string, data: any, apiConfig: any) => {
   return request;
 };
 
-export const put = async (url: string, data: any) => {
-  const config = await getRequestConfig();
+export const put = async (url: string, data: any,apiConfig?:any) => {
+  const config = await getRequestConfig(apiConfig);
   config.headers['Content-Type'] = 'application/json';
   const request = axios.put(
     await getUrlWithToken(url),
@@ -196,8 +196,9 @@ export const patch = async (url: string, data: any) => {
   return request;
 };
 
-export const deleteResource = async (url: string) => {
-  const config = await getRequestConfig();
+export const deleteResource = async (url: string , apiConfig?:any) => {
+  const config = await getRequestConfig(apiConfig);
+  config.headers['Content-Type'] = 'application/json';
   const request = axios.delete(await getUrlWithToken(url), config);
   return request;
 };

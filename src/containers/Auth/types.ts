@@ -224,6 +224,8 @@ export interface ReSendEmailResponse {
   results: ReSendEmailResults;
 }
 
+
+
 export enum AuthActionTypes {
 
   PHONE_NUMBER_REQUEST = "@@auth/phone/PHONE_NUMBER_REQUEST",

@@ -84,9 +84,9 @@ class AppNavigator extends Component<any, any> {
   }
 
   render() {
-   const user= this.props.userDetails !== null &&
+   const user= (this.props.userDetails !== null &&
     this.props.userDetails.results !== null &&
-    this.props.userDetails.results.isLogin
+    this.props.userDetails.results.isLogin) || JSON.parse(localStorage.getItem("user") as string)
     return user ? <this.App /> : <this.Auth />;
   }
 }
